@@ -7,6 +7,8 @@
 
 namespace Drupal\poll\Tests;
 
+use Drupal\Core\Session\AccountInterface;
+
 /**
  * Check that users and anonymous users from specified ip-address can only vote once.
  *
@@ -18,24 +20,13 @@ class PollVoteCheckHostnameTest extends PollTestBase {
     parent::setUp();
 
     // Allow anonymous users to vote on polls.
-    user_role_change_permissions(DRUPAL_ANONYMOUS_RID, array(
-//      'vote on polls' => TRUE,
+    user_role_change_permissions(AccountInterface::ANONYMOUS_ROLE, array(
+      // 'vote on polls' => TRUE,
       'cancel own vote' => TRUE,
       'access polls' => TRUE,
     ));
 
-    // Enable page cache to verify that the result page is not saved in the
-    // cache when anonymous voting is allowed.
-    $this->config('system.performance')
-      ->set('cache.page.use_internal', 1)
-      ->set('cache.page.max_age', 60)
-      ->save();
-
     $this->poll->setAnonymousVoteAllow(TRUE)->save();
-
-    // Create web users.
-//    $this->web_user1 = $this->drupalCreateUser(array('access content', 'vote on polls', 'cancel own vote'));
-//    $this->web_user2 = $this->drupalCreateUser(array('access content', 'vote on polls'));
   }
 
   /**
@@ -54,7 +45,7 @@ class PollVoteCheckHostnameTest extends PollTestBase {
       'choice' => '1',
     );
 
-  //  $this->web_user->getUserName();
+    //  $this->web_user->getUserName();
     // User1 vote on Poll.
     $this->drupalPostForm('poll/' . $this->poll->id(), $edit, t('Vote'));
     $this->assertText(t('Your vote has been recorded.'), format_string('%user vote was recorded.', array('%user' => $this->web_user->getUserName())));
