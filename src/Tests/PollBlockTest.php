@@ -63,7 +63,5 @@ class PollBlockTest extends PollTestBase {
     $poll->save();
     $this->drupalGet('user/' . $user->id());
     $this->assertNoText($poll->label(), 'Poll no longer appears in block.');
-
-    // $this->assertNoText('Vote', "Can not vote, poll is disabled");
   }
 }
